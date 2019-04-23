@@ -7,11 +7,14 @@ import grpc
 
 class MoneyOrderHelper():
 
-    def __init__(self, numberOfMoneyOrders, publicKey):
+    def __init__(self, numberOfMoneyOrders, numberOfSecretPairs, publicKey):
         self.numberOfMoneyOrders = numberOfMoneyOrders
         self.pub_key = publicKey
+        self.numberOfSecretPairs = numberOfSecretPairs
+        self.identityMsg_len = 440
+        self.amount_and_uniqueStringMsg_len = 160
 
-    def createMoneyOrder(self, customerAccountNumber, customerName, customerEmailId):
+    def createMoneyOrder(self, customerAccountNumber, customerName, customerEmailId, moneyOrderAmount):
         customerAccountNumber = self.EnforceLength(customerAccountNumber, 5)
         customerName = self.EnforceLength(customerName, 20)
         customerEmailId = self.EnforceLength(customerEmailId,30)
@@ -62,7 +65,7 @@ class MoneyOrderHelper():
         N1,N2 = self.secret_splitting(I)
         
         #randomly generate blinding factors
-        r = random.getrandbits(1024) 
+        r = random.getrandbits(512) 
         #t = str(r)
         #find bitVector of blinding factor and its inverse
         b_factor = BitVector(intVal = r)
@@ -90,12 +93,12 @@ class MoneyOrderHelper():
     def secret_splitting(self, I):
         N1 = []
         N2 = []
-        for i in range(0, n_SecretPairs):
-            n1 = random.getrandbits(I_n) #returns an random int with I_n bits
-            N11 = BitVector(intVal = n1, size = I_n)
+        for i in range(0, self.numberOfSecretPairs):
+            n1 = random.getrandbits(self.identityMsg_len) #returns an random int with I_n bits
+            N11 = BitVector(intVal = n1, size = self.identityMsg_len)
             N21 = I^N11 # ^ is XOR operation
             N1.append(N11)
-            N2.append(BitVector(intVal = N21.int_val(),size = I_n))
+            N2.append(BitVector(intVal = N21.int_val(),size = self.identityMsg_len))
     
         return N1,N2 #returns N1 and N2 as [] of BitVectors
 

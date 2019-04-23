@@ -10,6 +10,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
 
         # do some calculations
 
-        return digitalCashService_pb2.ack(success=False, message="File does not exist in the cluster.")
+        return digitalCashService_pb2.Message(messageData="", numberOfMoneyOrders=-1)
 
 
