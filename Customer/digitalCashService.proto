@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package digitalCashService;
+
+service digitalCashService {
+    rpc send(Data) returns (ack);
+}
+
+message OldData {
+	string username = 1;
+	string filename =2;
+	bytes data =3;
+	int32 seqNo = 4;
+	string replicaNode = 5;
+}
+
+message Data {
+    string messageData = 1;
+}
+
+message ack {
+	bool success =1;
+	string message = 2;
+}
