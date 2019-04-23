@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='digitalCashService',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x18\x64igitalCashService.proto\x12\x12\x64igitalCashService\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\"\x1b\n\x04\x44\x61ta\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2O\n\x12\x64igitalCashService\x12\x39\n\x04send\x12\x18.digitalCashService.Data\x1a\x17.digitalCashService.ackb\x06proto3')
+  serialized_pb=_b('\n\x18\x64igitalCashService.proto\x12\x12\x64igitalCashService\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\"\x1e\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2d\n\x12\x64igitalCashService\x12N\n\x16sendToBankFromCustomer\x12\x1b.digitalCashService.Message\x1a\x17.digitalCashService.ackb\x06proto3')
 )
 
 
@@ -84,15 +84,15 @@ _OLDDATA = _descriptor.Descriptor(
 )
 
 
-_DATA = _descriptor.Descriptor(
-  name='Data',
-  full_name='digitalCashService.Data',
+_MESSAGE = _descriptor.Descriptor(
+  name='Message',
+  full_name='digitalCashService.Message',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='messageData', full_name='digitalCashService.Data.messageData', index=0,
+      name='messageData', full_name='digitalCashService.Message.messageData', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -111,7 +111,7 @@ _DATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=145,
-  serialized_end=172,
+  serialized_end=175,
 )
 
 
@@ -148,12 +148,12 @@ _ACK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=174,
-  serialized_end=213,
+  serialized_start=177,
+  serialized_end=216,
 )
 
 DESCRIPTOR.message_types_by_name['OldData'] = _OLDDATA
-DESCRIPTOR.message_types_by_name['Data'] = _DATA
+DESCRIPTOR.message_types_by_name['Message'] = _MESSAGE
 DESCRIPTOR.message_types_by_name['ack'] = _ACK
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -164,12 +164,12 @@ OldData = _reflection.GeneratedProtocolMessageType('OldData', (_message.Message,
   ))
 _sym_db.RegisterMessage(OldData)
 
-Data = _reflection.GeneratedProtocolMessageType('Data', (_message.Message,), dict(
-  DESCRIPTOR = _DATA,
+Message = _reflection.GeneratedProtocolMessageType('Message', (_message.Message,), dict(
+  DESCRIPTOR = _MESSAGE,
   __module__ = 'digitalCashService_pb2'
-  # @@protoc_insertion_point(class_scope:digitalCashService.Data)
+  # @@protoc_insertion_point(class_scope:digitalCashService.Message)
   ))
-_sym_db.RegisterMessage(Data)
+_sym_db.RegisterMessage(Message)
 
 ack = _reflection.GeneratedProtocolMessageType('ack', (_message.Message,), dict(
   DESCRIPTOR = _ACK,
@@ -186,15 +186,15 @@ _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=215,
-  serialized_end=294,
+  serialized_start=218,
+  serialized_end=318,
   methods=[
   _descriptor.MethodDescriptor(
-    name='send',
-    full_name='digitalCashService.digitalCashService.send',
+    name='sendToBankFromCustomer',
+    full_name='digitalCashService.digitalCashService.sendToBankFromCustomer',
     index=0,
     containing_service=None,
-    input_type=_DATA,
+    input_type=_MESSAGE,
     output_type=_ACK,
     serialized_options=None,
   ),

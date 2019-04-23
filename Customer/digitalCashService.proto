@@ -3,7 +3,7 @@ syntax = "proto3";
 package digitalCashService;
 
 service digitalCashService {
-    rpc send(Data) returns (ack);
+    rpc sendToBankFromCustomer(Message) returns (ack);
 }
 
 message OldData {
@@ -14,8 +14,8 @@ message OldData {
 	string replicaNode = 5;
 }
 
-message Data {
-    string messageData = 1;
+message Message {
+	string messageData = 1;
 }
 
 message ack {

@@ -14,9 +14,9 @@ class digitalCashServiceStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.send = channel.unary_unary(
-        '/digitalCashService.digitalCashService/send',
-        request_serializer=digitalCashService__pb2.Data.SerializeToString,
+    self.sendToBankFromCustomer = channel.unary_unary(
+        '/digitalCashService.digitalCashService/sendToBankFromCustomer',
+        request_serializer=digitalCashService__pb2.Message.SerializeToString,
         response_deserializer=digitalCashService__pb2.ack.FromString,
         )
 
@@ -25,7 +25,7 @@ class digitalCashServiceServicer(object):
   # missing associated documentation comment in .proto file
   pass
 
-  def send(self, request, context):
+  def sendToBankFromCustomer(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -35,9 +35,9 @@ class digitalCashServiceServicer(object):
 
 def add_digitalCashServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'send': grpc.unary_unary_rpc_method_handler(
-          servicer.send,
-          request_deserializer=digitalCashService__pb2.Data.FromString,
+      'sendToBankFromCustomer': grpc.unary_unary_rpc_method_handler(
+          servicer.sendToBankFromCustomer,
+          request_deserializer=digitalCashService__pb2.Message.FromString,
           response_serializer=digitalCashService__pb2.ack.SerializeToString,
       ),
   }

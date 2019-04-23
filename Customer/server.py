@@ -1,3 +1,5 @@
+from concurrent import futures
+
 from random import randrange, random
 from fractions import gcd
 import grpc
@@ -5,6 +7,8 @@ import random
 import hashlib
 import pickle
 from Crypto.PublicKey import RSA
+import digitalCashService_pb2_grpc
+import digitalCashService_pb2
 import sys
 sys.path.append('./Service')
 sys.path.append('./utils')
@@ -19,7 +23,7 @@ numberOfMoneyOrders = 5
 with open('publicKeyRsa.pub', 'r') as pub_file:
     pub_key = RSA.importKey(pub_file.read())
 
-def handleUserInputs():
+def handleUserInputs(stub):
 
     print("===================================")
     print("1. Make a money order.")
@@ -32,7 +36,7 @@ def handleUserInputs():
     elif(option=='2'):
         sendMoneyOrderToMerchant()
 
-def makeMoneyOrder():
+def makeMoneyOrder(stub):
     customerAccountNumber = input("Please enter your account number.")
     customerName = input("Please enter your name")
     customerEmailId = input("Please enter your email address")
@@ -51,14 +55,33 @@ def makeMoneyOrder():
     Message = "MO_request-*-*-" 
     for i in range(0, numberOfMoneyOrders):
         Message +=" "+m[i]
+    
 
-def run_server(customer_ip_address, bank_ip_address):
+
+def run_server(customer_ip_address, bank_ip_address, customer_port, bank_port):
 
     # Declare the gRPC server with 10 max_workers
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     # Add FileService to the server.
     digitalCashService_pb2_grpc.add_digitalCashServiceServicer_to_server(DigitalCashServer(), server)
+
+    # Start the server on server_port.
+    server.add_insecure_port('[::]:{}'.format(customer_port))
+    server.start()
+
+    with grpc.insecure_channel(bank_ip_address) as channel:
+        try:
+            grpc.channel_ready_future(channel).result(timeout=1)
+        except grpc.FutureTimeoutError:
+            print("Connection timeout. Unable to connect to port ")
+            exit()
+        else:
+            print("Connected")
+    
+    stub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
+
+    handleUserInputs(stub)
 
     # Keep the server running for '_ONE_DAY_IN_SECONDS' seconds.
     try:
@@ -73,8 +96,8 @@ if __name__ == '__main__':
     
     bank_ip_address = "localhost:3000"
     customer_ip_address = "localhost:4000"
-
-    handleUserInputs()
+    customer_port = "4000"
+    bank_port = "3000"
     
     # Start the server
-    run_server(customer_ip_address, bank_ip_address)
+    run_server(customer_ip_address, bank_ip_address, customer_port, bank_port)
