@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package digitalCashService;
-
 service digitalCashService {
     rpc sendToBankFromCustomer(Message) returns (Message);
 	rpc ping(pingMessage) returns (ack);

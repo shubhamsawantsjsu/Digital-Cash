@@ -16,10 +16,10 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='digitalCashService.proto',
-  package='digitalCashService',
+  package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x18\x64igitalCashService.proto\x12\x12\x64igitalCashService\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\";\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2\xaa\x01\n\x12\x64igitalCashService\x12R\n\x16sendToBankFromCustomer\x12\x1b.digitalCashService.Message\x1a\x1b.digitalCashService.Message\x12@\n\x04ping\x12\x1f.digitalCashService.pingMessage\x1a\x17.digitalCashService.ackb\x06proto3')
+  serialized_pb=_b('\n\x18\x64igitalCashService.proto\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\";\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2^\n\x12\x64igitalCashService\x12,\n\x16sendToBankFromCustomer\x12\x08.Message\x1a\x08.Message\x12\x1a\n\x04ping\x12\x0c.pingMessage\x1a\x04.ackb\x06proto3')
 )
 
 
@@ -27,41 +27,41 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _OLDDATA = _descriptor.Descriptor(
   name='OldData',
-  full_name='digitalCashService.OldData',
+  full_name='OldData',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='username', full_name='digitalCashService.OldData.username', index=0,
+      name='username', full_name='OldData.username', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='filename', full_name='digitalCashService.OldData.filename', index=1,
+      name='filename', full_name='OldData.filename', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='data', full_name='digitalCashService.OldData.data', index=2,
+      name='data', full_name='OldData.data', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='seqNo', full_name='digitalCashService.OldData.seqNo', index=3,
+      name='seqNo', full_name='OldData.seqNo', index=3,
       number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='replicaNode', full_name='digitalCashService.OldData.replicaNode', index=4,
+      name='replicaNode', full_name='OldData.replicaNode', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -79,27 +79,27 @@ _OLDDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=48,
-  serialized_end=143,
+  serialized_start=28,
+  serialized_end=123,
 )
 
 
 _MESSAGE = _descriptor.Descriptor(
   name='Message',
-  full_name='digitalCashService.Message',
+  full_name='Message',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='messageData', full_name='digitalCashService.Message.messageData', index=0,
+      name='messageData', full_name='Message.messageData', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='numberOfMoneyOrders', full_name='digitalCashService.Message.numberOfMoneyOrders', index=1,
+      name='numberOfMoneyOrders', full_name='Message.numberOfMoneyOrders', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -117,27 +117,27 @@ _MESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=145,
-  serialized_end=204,
+  serialized_start=125,
+  serialized_end=184,
 )
 
 
 _ACK = _descriptor.Descriptor(
   name='ack',
-  full_name='digitalCashService.ack',
+  full_name='ack',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='success', full_name='digitalCashService.ack.success', index=0,
+      name='success', full_name='ack.success', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='message', full_name='digitalCashService.ack.message', index=1,
+      name='message', full_name='ack.message', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -155,20 +155,20 @@ _ACK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=206,
-  serialized_end=245,
+  serialized_start=186,
+  serialized_end=225,
 )
 
 
 _PINGMESSAGE = _descriptor.Descriptor(
   name='pingMessage',
-  full_name='digitalCashService.pingMessage',
+  full_name='pingMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='message', full_name='digitalCashService.pingMessage.message', index=0,
+      name='message', full_name='pingMessage.message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -186,8 +186,8 @@ _PINGMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=247,
-  serialized_end=277,
+  serialized_start=227,
+  serialized_end=257,
 )
 
 DESCRIPTOR.message_types_by_name['OldData'] = _OLDDATA
@@ -199,28 +199,28 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 OldData = _reflection.GeneratedProtocolMessageType('OldData', (_message.Message,), dict(
   DESCRIPTOR = _OLDDATA,
   __module__ = 'digitalCashService_pb2'
-  # @@protoc_insertion_point(class_scope:digitalCashService.OldData)
+  # @@protoc_insertion_point(class_scope:OldData)
   ))
 _sym_db.RegisterMessage(OldData)
 
 Message = _reflection.GeneratedProtocolMessageType('Message', (_message.Message,), dict(
   DESCRIPTOR = _MESSAGE,
   __module__ = 'digitalCashService_pb2'
-  # @@protoc_insertion_point(class_scope:digitalCashService.Message)
+  # @@protoc_insertion_point(class_scope:Message)
   ))
 _sym_db.RegisterMessage(Message)
 
 ack = _reflection.GeneratedProtocolMessageType('ack', (_message.Message,), dict(
   DESCRIPTOR = _ACK,
   __module__ = 'digitalCashService_pb2'
-  # @@protoc_insertion_point(class_scope:digitalCashService.ack)
+  # @@protoc_insertion_point(class_scope:ack)
   ))
 _sym_db.RegisterMessage(ack)
 
 pingMessage = _reflection.GeneratedProtocolMessageType('pingMessage', (_message.Message,), dict(
   DESCRIPTOR = _PINGMESSAGE,
   __module__ = 'digitalCashService_pb2'
-  # @@protoc_insertion_point(class_scope:digitalCashService.pingMessage)
+  # @@protoc_insertion_point(class_scope:pingMessage)
   ))
 _sym_db.RegisterMessage(pingMessage)
 
@@ -228,16 +228,16 @@ _sym_db.RegisterMessage(pingMessage)
 
 _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
   name='digitalCashService',
-  full_name='digitalCashService.digitalCashService',
+  full_name='digitalCashService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=280,
-  serialized_end=450,
+  serialized_start=259,
+  serialized_end=353,
   methods=[
   _descriptor.MethodDescriptor(
     name='sendToBankFromCustomer',
-    full_name='digitalCashService.digitalCashService.sendToBankFromCustomer',
+    full_name='digitalCashService.sendToBankFromCustomer',
     index=0,
     containing_service=None,
     input_type=_MESSAGE,
@@ -246,7 +246,7 @@ _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ping',
-    full_name='digitalCashService.digitalCashService.ping',
+    full_name='digitalCashService.ping',
     index=1,
     containing_service=None,
     input_type=_PINGMESSAGE,

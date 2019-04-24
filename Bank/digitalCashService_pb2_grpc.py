@@ -15,12 +15,12 @@ class digitalCashServiceStub(object):
       channel: A grpc.Channel.
     """
     self.sendToBankFromCustomer = channel.unary_unary(
-        '/digitalCashService.digitalCashService/sendToBankFromCustomer',
+        '/digitalCashService/sendToBankFromCustomer',
         request_serializer=digitalCashService__pb2.Message.SerializeToString,
         response_deserializer=digitalCashService__pb2.Message.FromString,
         )
     self.ping = channel.unary_unary(
-        '/digitalCashService.digitalCashService/ping',
+        '/digitalCashService/ping',
         request_serializer=digitalCashService__pb2.pingMessage.SerializeToString,
         response_deserializer=digitalCashService__pb2.ack.FromString,
         )
@@ -59,5 +59,5 @@ def add_digitalCashServiceServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'digitalCashService.digitalCashService', rpc_method_handlers)
+      'digitalCashService', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

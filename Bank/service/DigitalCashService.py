@@ -33,5 +33,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         return digitalCashService_pb2.Message(messageData="", numberOfMoneyOrders=-1)
 
     def ping(self, request, context):
+        print(request.message)
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
 

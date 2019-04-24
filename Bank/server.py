@@ -34,7 +34,7 @@ def run_server(bank_host_name, bank_port):
     # Start the server on server_port.
     server.add_insecure_port('[::]:{}'.format(bank_port))
     server.start()
-    print("--------------------Bank server has been started----------------------------")
+    print("------- Bank server has been started on port {} -------".format(bank_port))
 
     # Keep the server running for '_ONE_DAY_IN_SECONDS' seconds.
     try:
