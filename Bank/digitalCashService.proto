@@ -16,6 +16,7 @@ message OldData {
 message Message {
 	string messageData = 1;
 	int32 numberOfMoneyOrders = 2;
+	string MOString = 3;
 }
 
 message ack {

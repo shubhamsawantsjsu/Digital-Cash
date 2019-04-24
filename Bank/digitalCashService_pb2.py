@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x18\x64igitalCashService.proto\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\";\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2^\n\x12\x64igitalCashService\x12,\n\x16sendToBankFromCustomer\x12\x08.Message\x1a\x08.Message\x12\x1a\n\x04ping\x12\x0c.pingMessage\x1a\x04.ackb\x06proto3')
+  serialized_pb=_b('\n\x18\x64igitalCashService.proto\"_\n\x07OldData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05seqNo\x18\x04 \x01(\x05\x12\x13\n\x0breplicaNode\x18\x05 \x01(\t\"M\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\x12\x10\n\x08MOString\x18\x03 \x01(\t\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2^\n\x12\x64igitalCashService\x12,\n\x16sendToBankFromCustomer\x12\x08.Message\x1a\x08.Message\x12\x1a\n\x04ping\x12\x0c.pingMessage\x1a\x04.ackb\x06proto3')
 )
 
 
@@ -105,6 +105,13 @@ _MESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='MOString', full_name='Message.MOString', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -118,7 +125,7 @@ _MESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=125,
-  serialized_end=184,
+  serialized_end=202,
 )
 
 
@@ -155,8 +162,8 @@ _ACK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=186,
-  serialized_end=225,
+  serialized_start=204,
+  serialized_end=243,
 )
 
 
@@ -186,8 +193,8 @@ _PINGMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=227,
-  serialized_end=257,
+  serialized_start=245,
+  serialized_end=275,
 )
 
 DESCRIPTOR.message_types_by_name['OldData'] = _OLDDATA
@@ -232,8 +239,8 @@ _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=259,
-  serialized_end=353,
+  serialized_start=277,
+  serialized_end=371,
   methods=[
   _descriptor.MethodDescriptor(
     name='sendToBankFromCustomer',

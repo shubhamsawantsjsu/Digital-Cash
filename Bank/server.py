@@ -23,13 +23,16 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 with open('publicKeyRsa.pub', 'r') as pub_file:
     pub_key = RSA.importKey(pub_file.read())
 
+with open('privateKeyRsa.pvt', 'r') as pvt_file:
+    pvt_key = RSA.importKey(pvt_file.read())
+
 def run_server(bank_host_name, bank_port):
 
     # Declare the gRPC server with 10 max_workers
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     # Add FileService to the server.
-    digitalCashService_pb2_grpc.add_digitalCashServiceServicer_to_server(DigitalCashServer(), server)
+    digitalCashService_pb2_grpc.add_digitalCashServiceServicer_to_server(DigitalCashServer(pub_key, pvt_key), server)
 
     # Start the server on server_port.
     server.add_insecure_port('[::]:{}'.format(bank_port))
