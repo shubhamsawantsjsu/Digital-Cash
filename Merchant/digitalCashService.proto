@@ -2,7 +2,9 @@ syntax = "proto3";
 
 service digitalCashService {
     rpc sendToBankFromCustomer(Message) returns (Message);
-	rpc sendToMerchantFromCustomer(Message) returns (Message);
+	rpc sendToMerchantFromCustomer(Message) returns (ack);
+	rpc sendToBankFromMerchant(Message) returns (Message);
+	rpc sendToCustomerFromMerchant(Message) returns (Message);
 	rpc ping(pingMessage) returns (ack);
 }
 

@@ -1,5 +1,7 @@
 from BitVector import *
 import sys
+sys.path.append('./service')
+sys.path.append('./utils')
 import random
 import Crypto
 from Crypto.PublicKey import RSA
@@ -105,12 +107,11 @@ class MoneyOrderHelper():
     def get_b_inverses(self, b, t):
         #b_ = b.split(",")
         b_inverse ="b-inverse-*-*-"
-        for i in range(0,n_MoneyOrders):
+        for i in range(0, self.numberOfMoneyOrders):
             if i != t:
                 b_inverse += " "+str(i)+"," +str(b[i])
             else: print(i)
         return b_inverse
-
 
     def Multiply_inverse(self, Msg, b, amount): # Msg - string, b - integer
         vals = Msg.split(' ')
@@ -121,3 +122,14 @@ class MoneyOrderHelper():
             m = (l[i]*b) % self.pub_key.n
             M_signed += ' ' +str(m)
         return M_signed 
+
+    def decrpyt_amount(self, mess):
+        encrypted = pub_key.encrypt(int(mess), None) #blinding factor = "hello1"**e
+        t = str(encrypted[0])
+        return t
+
+    def BitCommit (self, message, key):
+        from hashlib import sha1
+        hashed = hmac.new(key, message, sha1)
+        # The signature
+        return hashed.digest().encode("base64").rstrip('\n')

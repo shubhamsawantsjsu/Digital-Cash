@@ -49,6 +49,30 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         print(request.message)
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
 
+    def sendToBankFromMerchant(self, request, context):
+        print("----------------------Inside sendToBankFromCustomer--------------")
+        message = request.messageData
+
+        if (not message):
+            print("Message is empty!!")
+            return digitalCashService_pb2.Message(messageData="")
+        
+        req = message.split('-*-*- ')
+
+        print("Request is : ", req[0])
+
+        #1. req[1] has the (amt+unique string) + (one of the four pairs)
+        #2. decrypt the first message and check for unique string in DB
+        #3. if unique string not present already, credit amount, else reply not credited
+        val = search_UniqueString(req[1])
+        if val == False:
+            msg = "credit_merchant"
+            s.sendto(msg,addr)
+
+        else:
+            msg = "MO already used"
+            s.sendto(msg,addr)
+
     def process_MO(self, MO1, b_inv, T):
         MO_ = MO1.split(" ")
         b = b_inv.split(" ")
@@ -142,3 +166,37 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
             msg += " "+str(M_b)
         return msg
 
+    def search_UniqueString(Msg):
+        import codecs
+        M = Msg.split(",")
+        e = self.pub_key.encrypt(int(M[0]),None)
+        msg = BitVector(intVal = e[0], size = 160)
+        MO_string = msg.get_bitvector_in_ascii()
+        amt = int(MO_string[:5])
+        
+        print("Amount is ", amt)
+        
+        Unique_str = MO_string[5:]
+        #Unique_str = t.encode('utf-8')
+        print(Unique_str)
+        
+        for l in Unique_str:
+            if l == MO_string: 
+                return True
+
+        bal = 0
+
+        with open("merchantAcc.txt",'r') as fl:
+            line = fl.readlines()
+        t = len(line)
+        with open("merchantAcc.txt",'a') as fl:
+            if (not line): 
+                bal = 0
+            else : 
+                bal = int(line[t-1])
+            Amt = bal + amt
+            fl.write(str(Amt))
+            fl.write('\n')
+        
+        #U_str.append(MO_string)
+        return False

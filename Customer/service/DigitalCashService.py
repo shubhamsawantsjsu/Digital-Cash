@@ -3,7 +3,6 @@ sys.path.append('../')
 import digitalCashService_pb2_grpc
 import digitalCashService_pb2
 from BitVector import *
-import sys
 import random
 import Crypto
 import time
@@ -34,4 +33,12 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
     def ping(self, request, context):
         print(request.message)
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
+        
+    def sendToCustomerFromMerchant(self, request, context):
+        bitList = request.messageData
+        p = bitList.split(",")
+        message_pairs = d[1] + "," + d[2+int(p[0])]+ "," + d[2+int(p[1])]+ "," + d[2+int(p[2])]+ "," + d[2+int(p[3])]
+        return digitalCashService_pb2.Message(messageData=message_pairs)
+
+
 

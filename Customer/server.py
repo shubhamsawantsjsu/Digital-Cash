@@ -37,7 +37,7 @@ def handleUserInputs(stub):
     if(option=='1'):
         makeMoneyOrder(stub)
     elif(option=='2'):
-        sendMoneyOrderToMerchant()
+        sendMoneyOrderToMerchant(stub)
 
 def makeMoneyOrder(stub):
     customerAccountNumber = input("Please enter your 5 digit account number :: ")
@@ -62,6 +62,77 @@ def makeMoneyOrder(stub):
     responseMessage = stub.sendToBankFromCustomer(digitalCashService_pb2.Message(messageData=Message, numberOfMoneyOrders=numberOfMoneyOrders))
     
     print("Printing the response:", responseMessage.messageData)
+
+    result = responseMessage.messageData
+    k = result.split('-*-*- ')
+    print(k[0])
+
+    ind = int(k[1])
+    b_inverse = moneyOrderHelper.get_b_inverses(b,int(k[1]))
+    print(b_inverse)
+
+    #send blinding factors of the asked MO numbers to bank
+    responseMessage = stub.sendToBankFromCustomer(digitalCashService_pb2.Message(messageData=b_inverse, numberOfMoneyOrders=numberOfMoneyOrders, MOString=Message))
+    #recieve signed MO from bank
+
+    MO = responseMessage.messageData
+    req = MO.split("-*-*- ")
+    print(req[0])
+    
+    if MO != "Denied":
+        MO_signed = moneyOrderHelper.Multiply_inverse(req[1],b[ind],moneyOrderAmount)
+        with open('Unused_MO.txt', 'a') as fh:
+            fh.write(MO_signed)
+            fh.write("\n")
+    else: 
+      print("MO request rejected!")
+
+def sendMoneyOrderToMerchant(stub):
+    with open('Unused_MO.txt', 'r') as fh:
+        line = fh.readlines()
+
+    if not line: 
+        print("No MOs to send, please select Mode = 1 next")
+        return
+    
+    Request = line[0]
+    line = line[1:]
+    
+    with open('Unused_MO.txt', 'w') as fh:
+        for l in line: fh.write(l)
+    
+    with open('Used_MO.txt', 'a') as fh:
+        fh.write(Request)
+        fh.write("\n")
+    
+    d = Request.split(" ")
+
+    moneyOrderHelper = MoneyOrderHelper(numberOfMoneyOrders, numberOfSecretPairs, pub_key)
+
+    Message = moneyOrderHelper.decrpyt_amount(d[1]) 
+
+    key = random.randint(0,1234)
+
+    key = str(key)
+    print (BitVector(intVal = int(Message), size = 1024).get_bitvector_in_ascii())
+    
+    hash_val = BitCommit (Message, key)
+    Hash_and_key = hash_val + ','+key
+
+    stub.sendToMerchantFromCustomer(digitalCashService_pb2.Message(messageData=b_inverse, numberOfMoneyOrders=numberOfMoneyOrders, MOString=Message))
+    
+    # print(Hash_and_key)
+    # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # s.sendto(Hash_and_key,merch_addr)
+    # ii,add = s.recvfrom(BUFFER_SIZE)
+    # print(ii)
+    p = ii.split(",")
+    Msg_pairs = d[1] + "," + d[2+int(p[0])]+ "," + d[2+int(p[1])]+ "," + d[2+int(p[2])]+ "," + d[2+int(p[3])]#bad hard code on number of secret pairs, got to change
+    s.sendto(Msg_pairs,merch_addr)
+    op, add = s.recvfrom(BUFFER_SIZE)
+    print(op)
+    s.close()
+
 
 def run_server(bank_ip_address, customer_port):
 
