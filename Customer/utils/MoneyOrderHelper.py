@@ -6,6 +6,8 @@ import random
 import Crypto
 from Crypto.PublicKey import RSA
 import grpc
+import hmac
+import hashlib
 
 class MoneyOrderHelper():
 
@@ -124,12 +126,17 @@ class MoneyOrderHelper():
         return M_signed 
 
     def decrpyt_amount(self, mess):
-        encrypted = pub_key.encrypt(int(mess), None) #blinding factor = "hello1"**e
+        encrypted = self.pub_key.encrypt(int(mess), None) #blinding factor = "hello1"**e
         t = str(encrypted[0])
         return t
 
     def BitCommit (self, message, key):
-        from hashlib import sha1
-        hashed = hmac.new(key, message, sha1)
+        hashed = hmac.new(key, message, hashlib.sha1)
         # The signature
         return hashed.digest().encode("base64").rstrip('\n')
+
+    def generate_signature(self, key, data):
+        #key = 'key'
+        key_bytes= bytes(key , 'latin-1')
+        data_bytes = bytes(data, 'latin-1')
+        return hmac.new(key_bytes, data_bytes , hashlib.sha256).hexdigest()

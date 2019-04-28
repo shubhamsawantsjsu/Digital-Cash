@@ -7,13 +7,14 @@ import random
 import Crypto
 import time
 from Crypto.PublicKey import RSA
+import grpc
 
 class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
 
-    def __init__(self, merchantMOHelper, bankStub, customerStub):
+    def __init__(self, merchantMOHelper, bank_address, customer_address):
         self.merchantMOHelper = merchantMOHelper
-        self.bankStub = bankStub
-        self.customerStub = customerStub
+        self.bank_address = bank_address
+        self.customer_address = customer_address
 
     def sendToBankFromCustomer(self, request, context):
         print("----------------------Inside sendToBankFromCustomer--------------")
@@ -36,34 +37,57 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         return digitalCashService_pb2.Message(messageData="", numberOfMoneyOrders=-1)
 
     def ping(self, request, context):
-        print(request.message)
+        print("Successfully pinged!!!!!")
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
 
     def sendToMerchantFromCustomer(self, request, context):
+        print("----------------------Inside sendToMerchantFromCustomer-----------------")
         data = request.messageData
         d = data.split(",")
         hash_op = d[0]
         key = d[1] #hash output and key recieved
-        print data
+        print(data)
         SendStr = self.merchantMOHelper.RandomSelector()
-        print SendStr
+        print(SendStr)
         
-        response = self.customerStub.sendToCustomerFromMerchant(digitalCashService_pb2.Message(messageData=SendStr))
-        message = response.messageData
+        with grpc.insecure_channel(self.customer_address) as channel:
+            try:
+                grpc.channel_ready_future(channel).result(timeout=1)
+            except grpc.FutureTimeoutError:
+                print("Connection timeout. Unable to connect to port ")
+                return None
+            else:
+                print("Connected")
 
-        mess = message.split(',')
-        hash_ip = self.merchantMOHelper.decrpyt_amount(mess[0])
+            stub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
+            response = stub.sendToCustomerFromMerchant(digitalCashService_pb2.Message(messageData=SendStr))
+            message = response.messageData
 
-        print hash_ip
-        verify = self.merchantMOHelper.Verify (hash_ip, key, hash_op)
+            mess = message.split(',')
+            hash_ip = self.merchantMOHelper.decrpyt_amount(mess[0])
 
-        print ("Verification Status: " + str (verify))
+            print(hash_ip)
+            verify = self.merchantMOHelper.Verify (hash_ip, key, hash_op)
 
-        message = "MO_deposit-*-*- "+message
-        if verify == True: 
-            responseFromBank = self.bankStub.sendToBankFromMerchant(digitalCashService_pb2.Message(messageData=message))
-            print ("Received from Bank: " + str (responseFromBank.messageData))
-            return digitalCashService_pb2.Message(success = True, messageData="Successfully credited the Merchant.")
+            print("Verification Status: " + str (verify))
+
+            message = "MO_deposit-*-*- "+message
+            if verify == True: 
+                with grpc.insecure_channel(self.bank_address) as channel:
+                    try:
+                        grpc.channel_ready_future(channel).result(timeout=1)
+                    except grpc.FutureTimeoutError:
+                        print("Connection timeout. Unable to connect to port ")
+                        return None
+                    else:
+                        print("Connected")
+
+                    bankStub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
+
+                    responseFromBank = bankStub.sendToBankFromMerchant(digitalCashService_pb2.Message(messageData=message))
+                    
+                    print ("Received from Bank: " + str (responseFromBank.messageData))
+                    return digitalCashService_pb2.Message(success = True, messageData="Successfully credited the Merchant.")
 
         return digitalCashService_pb2.Message(success = False, messageData="Fraud has been detected")
 

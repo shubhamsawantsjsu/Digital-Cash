@@ -18,6 +18,7 @@ from MoneyOrderHelper import MoneyOrderHelper
 
 from DigitalCashService import DigitalCashServer
 import ssl
+import os
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 numberOfMoneyOrders = 5
@@ -26,7 +27,7 @@ numberOfSecretPairs = 4
 with open('publicKeyRsa.pub', 'r') as pub_file:
     pub_key = RSA.importKey(pub_file.read())
 
-def handleUserInputs(stub):
+def handleUserInputs(merchant_ip_address, bankStub, digitalCashServer):
 
     print("===================================")
     print("1. Make a money order.")
@@ -35,9 +36,9 @@ def handleUserInputs(stub):
     option = input("Please choose an option.")
 
     if(option=='1'):
-        makeMoneyOrder(stub)
+        makeMoneyOrder(bankStub)
     elif(option=='2'):
-        sendMoneyOrderToMerchant(stub)
+        sendMoneyOrderToMerchant(merchant_ip_address, bankStub, digitalCashServer)
 
 def makeMoneyOrder(stub):
     customerAccountNumber = input("Please enter your 5 digit account number :: ")
@@ -87,7 +88,8 @@ def makeMoneyOrder(stub):
     else: 
       print("MO request rejected!")
 
-def sendMoneyOrderToMerchant(stub):
+def sendMoneyOrderToMerchant(merchant_ip_address, stub, digitalCashServer):
+
     with open('Unused_MO.txt', 'r') as fh:
         line = fh.readlines()
 
@@ -107,40 +109,57 @@ def sendMoneyOrderToMerchant(stub):
     
     d = Request.split(" ")
 
+    digitalCashServer.MO_Pairs_data = d
+
     moneyOrderHelper = MoneyOrderHelper(numberOfMoneyOrders, numberOfSecretPairs, pub_key)
 
     Message = moneyOrderHelper.decrpyt_amount(d[1]) 
 
     key = random.randint(0,1234)
+    #key = "\x00"+os.urandom(4)+"\x00"
 
     key = str(key)
-    print (BitVector(intVal = int(Message), size = 1024).get_bitvector_in_ascii())
+    #print (BitVector(intVal = int(Message), size = 1024).get_bitvector_in_ascii())
     
-    hash_val = BitCommit (Message, key)
-    Hash_and_key = hash_val + ','+key
+    hash_val = moneyOrderHelper.generate_signature(key, Message)  #BitCommit (Message, key)
+    Hash_and_key = hash_val + ',' + key
 
-    stub.sendToMerchantFromCustomer(digitalCashService_pb2.Message(messageData=b_inverse, numberOfMoneyOrders=numberOfMoneyOrders, MOString=Message))
+    print("Printing the hash_and_key", Hash_and_key)
+    print("-------------------------------------------------------------------------------")
+
+    with grpc.insecure_channel(merchant_ip_address) as channel:
+        try:
+            grpc.channel_ready_future(channel).result(timeout=1)
+        except grpc.FutureTimeoutError:
+            print("Connection timeout. Unable to connect to port ")
+            return None
+        else:
+            print("Connected")
+
+        stub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
+        response = stub.sendToMerchantFromCustomer(digitalCashService_pb2.Message(messageData=Hash_and_key))
+    
     
     # print(Hash_and_key)
     # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # s.sendto(Hash_and_key,merch_addr)
     # ii,add = s.recvfrom(BUFFER_SIZE)
     # print(ii)
-    p = ii.split(",")
-    Msg_pairs = d[1] + "," + d[2+int(p[0])]+ "," + d[2+int(p[1])]+ "," + d[2+int(p[2])]+ "," + d[2+int(p[3])]#bad hard code on number of secret pairs, got to change
-    s.sendto(Msg_pairs,merch_addr)
-    op, add = s.recvfrom(BUFFER_SIZE)
-    print(op)
-    s.close()
+    # p = response.messageData.split(",")
+    # Msg_pairs = d[1] + "," + d[2+int(p[0])]+ "," + d[2+int(p[1])]+ "," + d[2+int(p[2])]+ "," + d[2+int(p[3])]#bad hard code on number of secret pairs, got to change
+    # s.sendto(Msg_pairs,merch_addr)
+    # op, add = s.recvfrom(BUFFER_SIZE)
+    # print(op)
+    # s.close()
 
-
-def run_server(bank_ip_address, customer_port):
+def run_server(bank_ip_address, merchant_ip_address, customer_port):
 
     # Declare the gRPC server with 10 max_workers
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
+    digitalCashServer = DigitalCashServer()
     # # Add FileService to the server.
-    digitalCashService_pb2_grpc.add_digitalCashServiceServicer_to_server(DigitalCashServer(), server)
+    digitalCashService_pb2_grpc.add_digitalCashServiceServicer_to_server(digitalCashServer, server)
 
     # # Start the server on server_port.
     server.add_insecure_port('[::]:{}'.format(customer_port))
@@ -159,7 +178,7 @@ def run_server(bank_ip_address, customer_port):
 
         stub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
         response = stub.ping(digitalCashService_pb2.pingMessage(message="Trying to ping you!!"))
-        handleUserInputs(stub)
+        handleUserInputs(merchant_ip_address, stub, digitalCashServer)
 
     # Keep the server running for '_ONE_DAY_IN_SECONDS' seconds.
     try:
@@ -173,4 +192,4 @@ def run_server(bank_ip_address, customer_port):
 if __name__ == '__main__':
     
     # Start the server
-    run_server('localhost:3000', '4000')
+    run_server('localhost:3000', 'localhost:5000', '4000')

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x18\x64igitalCashService.proto\"M\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\x12\x10\n\x08MOString\x18\x03 \x01(\t\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2\x90\x01\n\x12\x64igitalCashService\x12,\n\x16sendToBankFromCustomer\x12\x08.Message\x1a\x08.Message\x12\x30\n\x1asendToMerchantFromCustomer\x12\x08.Message\x1a\x08.Message\x12\x1a\n\x04ping\x12\x0c.pingMessage\x1a\x04.ackb\x06proto3')
+  serialized_pb=_b('\n\x18\x64igitalCashService.proto\"M\n\x07Message\x12\x13\n\x0bmessageData\x18\x01 \x01(\t\x12\x1b\n\x13numberOfMoneyOrders\x18\x02 \x01(\x05\x12\x10\n\x08MOString\x18\x03 \x01(\t\"\'\n\x03\x61\x63k\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1e\n\x0bpingMessage\x12\x0f\n\x07message\x18\x01 \x01(\t2\xec\x01\n\x12\x64igitalCashService\x12,\n\x16sendToBankFromCustomer\x12\x08.Message\x1a\x08.Message\x12,\n\x1asendToMerchantFromCustomer\x12\x08.Message\x1a\x04.ack\x12,\n\x16sendToBankFromMerchant\x12\x08.Message\x1a\x08.Message\x12\x30\n\x1asendToCustomerFromMerchant\x12\x08.Message\x1a\x08.Message\x12\x1a\n\x04ping\x12\x0c.pingMessage\x1a\x04.ackb\x06proto3')
 )
 
 
@@ -173,7 +173,7 @@ _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=181,
-  serialized_end=325,
+  serialized_end=417,
   methods=[
   _descriptor.MethodDescriptor(
     name='sendToBankFromCustomer',
@@ -190,13 +190,31 @@ _DIGITALCASHSERVICE = _descriptor.ServiceDescriptor(
     index=1,
     containing_service=None,
     input_type=_MESSAGE,
+    output_type=_ACK,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='sendToBankFromMerchant',
+    full_name='digitalCashService.sendToBankFromMerchant',
+    index=2,
+    containing_service=None,
+    input_type=_MESSAGE,
+    output_type=_MESSAGE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='sendToCustomerFromMerchant',
+    full_name='digitalCashService.sendToCustomerFromMerchant',
+    index=3,
+    containing_service=None,
+    input_type=_MESSAGE,
     output_type=_MESSAGE,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='ping',
     full_name='digitalCashService.ping',
-    index=2,
+    index=4,
     containing_service=None,
     input_type=_PINGMESSAGE,
     output_type=_ACK,
