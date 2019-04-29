@@ -124,9 +124,6 @@ def sendMoneyOrderToMerchant(merchant_ip_address, stub, digitalCashServer):
     hash_val = moneyOrderHelper.generate_signature(key, Message)  #BitCommit (Message, key)
     Hash_and_key = hash_val + ',' + key
 
-    print("Printing the hash_and_key", Hash_and_key)
-    print("-------------------------------------------------------------------------------")
-
     with grpc.insecure_channel(merchant_ip_address) as channel:
         try:
             grpc.channel_ready_future(channel).result(timeout=1)

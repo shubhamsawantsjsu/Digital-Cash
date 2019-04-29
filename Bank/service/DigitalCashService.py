@@ -64,14 +64,17 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         #1. req[1] has the (amt+unique string) + (one of the four pairs)
         #2. decrypt the first message and check for unique string in DB
         #3. if unique string not present already, credit amount, else reply not credited
-        val = search_UniqueString(req[1])
+
+        #### TO DO:
+        val = False#search_UniqueString(req[1])
+
         if val == False:
             msg = "credit_merchant"
-            s.sendto(msg,addr)
+            return digitalCashService_pb2.Message(messageData=msg)
 
         else:
             msg = "MO already used"
-            s.sendto(msg,addr)
+            return digitalCashService_pb2.Message(messageData=msg)
 
     def process_MO(self, MO1, b_inv, T):
         MO_ = MO1.split(" ")

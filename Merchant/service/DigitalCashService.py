@@ -71,7 +71,7 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
 
             print("Verification Status: " + str (verify))
 
-            message = "MO_deposit-*-*- "+message
+            message = "MO_deposit-*-*- " + message
             if verify == True: 
                 with grpc.insecure_channel(self.bank_address) as channel:
                     try:
@@ -83,11 +83,16 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
                         print("Connected")
 
                     bankStub = digitalCashService_pb2_grpc.digitalCashServiceStub(channel)
-
+                    
+                    print("Sending the message to bank----------------------------------")
                     responseFromBank = bankStub.sendToBankFromMerchant(digitalCashService_pb2.Message(messageData=message))
                     
-                    print ("Received from Bank: " + str (responseFromBank.messageData))
-                    return digitalCashService_pb2.Message(success = True, messageData="Successfully credited the Merchant.")
+                    print ("Received from Bank: " + responseFromBank.messageData)
+
+                    if(responseFromBank.messageData=="credit_merchant"):
+                        return digitalCashService_pb2.ack(success = True, messageData="Successfully credited the Merchant.")
+                    else:
+                        return digitalCashService_pb2.ack(success = False, messageData="Fraud has been detected")
 
         return digitalCashService_pb2.Message(success = False, messageData="Fraud has been detected")
 
