@@ -14,7 +14,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         self.MO_Pairs_data = None
 
     def sendToBankFromCustomer(self, request, context):
-        print("----------------------Inside sendToBankFromCustomer--------------")
         message = request.messageData
         numberOfMoneyOrders = request.numberOfMoneyOrders
 
@@ -24,7 +23,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         
         req = message.split('-*-*- ')
 
-        print("Request is : ", req[0])
         if(req[0]=="MoneyOrder_Request"):
             MO = req[1]
             t = random.randint(0, numberOfMoneyOrders-1)
@@ -38,14 +36,13 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
         
     def sendToCustomerFromMerchant(self, request, context):
+        #print("Printing the MO_Pairs_data-------------", self.MO_Pairs_data)
+
         d = self.MO_Pairs_data
         bitList = request.messageData
         p = bitList.split(",")
         message_pairs = d[1] + "," + d[2+int(p[0])]+ "," + d[2+int(p[1])]+ "," + d[2+int(p[2])]+ "," + d[2+int(p[3])]
         return digitalCashService_pb2.Message(messageData=message_pairs)
-
-    def sendToMerchantFromCustomer(self, request, context):
-        return digitalCashService_pb2.Message(success = False, messageData="Fraud has been detected")
 
 
 

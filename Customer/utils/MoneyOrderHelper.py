@@ -73,14 +73,13 @@ class MoneyOrderHelper():
         #t = str(r)
         #find bitVector of blinding factor and its inverse
         b_factor = BitVector(intVal = r)
-        b_inverse = b_factor.multiplicative_inverse(BitVector(intVal = self.pub_key.n)) #b_factor*b_inverse = 1; 
+        b_inverse = b_factor.multiplicative_inverse(BitVector(intVal = self.pub_key.n))
 
         #encrypt the blinding factor with Bank's public key
-        encrypted = self.pub_key.encrypt(b_factor.int_val(), None) #blinding factor = "hello1"**e
-        b_factor_pow_e = encrypted[0] #Blind_int = b_factor**e
+        encrypted = self.pub_key.encrypt(b_factor.int_val(), None)
+        b_factor_pow_e = encrypted[0]
 
-        B_msg = (b_factor_pow_e * msg.int_val())% self.pub_key.n #B_msg = message * b_factor**e
-        #B_msg = B_msg  # B_msg = message * (b_factor**e) % n ; Now msg is blinded
+        B_msg = (b_factor_pow_e * msg.int_val())% self.pub_key.n
         
         B_N1 = []
         B_N2 = []
@@ -92,22 +91,21 @@ class MoneyOrderHelper():
         for i in range(0, len(B_N1)):
             Message += ","+str(B_N1[i])+","+str(B_N2[i])
 
-        return Message,b_inverse.int_val() #sends a string and integer
+        return Message,b_inverse.int_val()
 
     def secret_splitting(self, I):
         N1 = []
         N2 = []
         for i in range(0, self.numberOfSecretPairs):
-            n1 = random.getrandbits(self.identityMsg_len) #returns an random int with I_n bits
+            n1 = random.getrandbits(self.identityMsg_len)
             N11 = BitVector(intVal = n1, size = self.identityMsg_len)
-            N21 = I^N11 # ^ is XOR operation
+            N21 = I^N11 
             N1.append(N11)
             N2.append(BitVector(intVal = N21.int_val(),size = self.identityMsg_len))
     
-        return N1,N2 #returns N1 and N2 as [] of BitVectors
+        return N1,N2
 
     def get_b_inverses(self, b, t):
-        #b_ = b.split(",")
         b_inverse ="b-inverse-*-*-"
         for i in range(0, self.numberOfMoneyOrders):
             if i != t:
@@ -115,7 +113,7 @@ class MoneyOrderHelper():
             else: print(i)
         return b_inverse
 
-    def Multiply_inverse(self, Msg, b, amount): # Msg - string, b - integer
+    def Multiply_inverse(self, Msg, b, amount):
         vals = Msg.split(' ')
         t = self.EnforceLength(str(amount), 5)
         M_signed = t + '-*-*-' 
@@ -126,17 +124,11 @@ class MoneyOrderHelper():
         return M_signed 
 
     def decrpyt_amount(self, mess):
-        encrypted = self.pub_key.encrypt(int(mess), None) #blinding factor = "hello1"**e
+        encrypted = self.pub_key.encrypt(int(mess), None)
         t = str(encrypted[0])
         return t
 
-    def BitCommit (self, message, key):
-        hashed = hmac.new(key, message, hashlib.sha1)
-        # The signature
-        return hashed.digest().encode("base64").rstrip('\n')
-
     def generate_signature(self, key, data):
-        #key = 'key'
         key_bytes= bytes(key , 'latin-1')
         data_bytes = bytes(data, 'latin-1')
         return hmac.new(key_bytes, data_bytes , hashlib.sha256).hexdigest()

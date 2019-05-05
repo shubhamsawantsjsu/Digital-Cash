@@ -8,15 +8,20 @@ import random
 import Crypto
 import time
 from Crypto.PublicKey import RSA
+import codecs
+import redis
+import ast
+
+_redis_port = 6379
 
 class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
-
+    
     def __init__(self, pub_key, pvt_key):
         self.pub_key = pub_key
         self.pvt_key = pvt_key
+        self.redis_instance = redis.StrictRedis(host='localhost', port=_redis_port, db=0)
 
     def sendToBankFromCustomer(self, request, context):
-        print("----------------------Inside sendToBankFromCustomer--------------")
         message = request.messageData
         numberOfMoneyOrders = request.numberOfMoneyOrders
 
@@ -26,13 +31,11 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         
         req = message.split('-*-*- ')
 
-        print("Request is : ", req[0])
-
         if(req[0]=="MoneyOrder_Request"):
+            print("********INFORMATION******** :: Processing the money order request!!")
             MO = req[1]
             t = random.randint(0, numberOfMoneyOrders-1)
             msg ="Except-*-*- "+ str(t)
-            print(msg)
             return digitalCashService_pb2.Message(messageData=msg, numberOfMoneyOrders=numberOfMoneyOrders)
 
         if(req[0] == "b-inverse"):
@@ -46,11 +49,9 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         return digitalCashService_pb2.Message(messageData="", numberOfMoneyOrders=-1)
 
     def ping(self, request, context):
-        print(request.message)
         return digitalCashService_pb2.ack(success = True, message = "Successfully Pinged!!")
 
     def sendToBankFromMerchant(self, request, context):
-        print("----------------------Inside sendToBankFromCustomer--------------")
         message = request.messageData
 
         if (not message):
@@ -59,19 +60,16 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         
         req = message.split('-*-*- ')
 
-        print("Request is : ", req[0])
-
         #1. req[1] has the (amt+unique string) + (one of the four pairs)
         #2. decrypt the first message and check for unique string in DB
         #3. if unique string not present already, credit amount, else reply not credited
 
-        #### TO DO:
-        val = False#search_UniqueString(req[1])
+        val = self.search_UniqueString(req[1])
 
         if val == False:
             msg = "credit_merchant"
+            print("********INFORMATION******** :: Crediting the merchant account!!")
             return digitalCashService_pb2.Message(messageData=msg)
-
         else:
             msg = "MO already used"
             return digitalCashService_pb2.Message(messageData=msg)
@@ -84,8 +82,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
         M_ = ''
         for i in range(0, len(b)):
             b_i = b[i].split(",")
-            print("The blinding factor")
-            #print b_i
             M, I = self.UnblindMessage(MO_[int(b_i[0])], int(b_i[1]))
             V = self.verify_secrets(I)
             if V == False: 
@@ -97,22 +93,16 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
                     print("\n")
         
         if V == True:       
-            # with open("customerAcc.txt", 'r') as fl:
-            #     line = fl.readlines()
-            # t = len(line)
-            # bal = int(line[t-1])
-            # print( bal)
-            # print(amt)
-            # print(type(amt))
-            # if bal < amt:
-            #     return "Denied"
-            
-            # else : 
-            #     bal = bal - amt
-            #     print(bal)
-            #     with open("customerAcc.txt", 'a') as fl:
-            #         fl.write(str(bal))
-            #         fl.write("\n")
+            with open("customerAcc.txt", 'r') as fl:
+                line = fl.readlines()
+            t = len(line)
+            bal = int(line[t-1])
+            if bal < amt:
+                return "Denied"
+            else : 
+                bal = bal - amt
+                with open("customerAcc.txt", 'a') as fl:
+                    fl.write("\n" + str(bal))
 
             #Msg = self.Sign(MO_[T],amt)
             Msg = self.Sign(MO_[T],1000)
@@ -146,8 +136,6 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
             N2 = BitVector(intVal = e[0], size = 1024)
             t = N1^N2
             I.append(t.get_bitvector_in_ascii())
-        print("Identity string, after secret pair combination") 
-        for i in I : print(i)
         print("MO: " +M) 
         return M, I #returns msg and I[] as strings
 
@@ -169,23 +157,31 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
             msg += " "+str(M_b)
         return msg
 
-    def search_UniqueString(Msg):
+    def search_UniqueString(self, Msg):
+
         import codecs
         M = Msg.split(",")
         e = self.pub_key.encrypt(int(M[0]),None)
-        msg = BitVector(intVal = e[0], size = 160)
+        msg = BitVector(intVal = e[0], size = 1024)
         MO_string = msg.get_bitvector_in_ascii()
-        amt = int(MO_string[:5])
+        #amt = int(MO_string[:5])
+
+        # e = self.pub_key.encrypt(int(M[0]),None)
         
-        print("Amount is ", amt)
+        # msg = BitVector(intVal = e[0], size = 1024)
+        
+        # MO_string = msg.get_bitvector_in_ascii()
+
+        #amt = int(MO_string[:5])
+        amt = int('1000')
         
         Unique_str = MO_string[5:]
-        #Unique_str = t.encode('utf-8')
-        print(Unique_str)
-        
-        for l in Unique_str:
-            if l == MO_string: 
-                return True
+
+        if(self.keyExists(Unique_str)):
+            print("***CRITICAL WARNING*** :: MO is already used, fraudulent transaction has been detected!!")
+            return True
+        else:
+            self.setData(Unique_str, "true")
 
         bal = 0
 
@@ -198,8 +194,11 @@ class DigitalCashServer(digitalCashService_pb2_grpc.digitalCashServiceServicer):
             else : 
                 bal = int(line[t-1])
             Amt = bal + amt
-            fl.write(str(Amt))
-            fl.write('\n')
-        
-        #U_str.append(MO_string)
+            fl.write("\n" + str(Amt))
         return False
+
+    def keyExists(self, key):
+        return self.redis_instance.exists(key)
+
+    def setData(self, key, value):
+        self.redis_instance.set(key,value)
